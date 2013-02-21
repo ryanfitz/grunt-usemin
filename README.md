@@ -99,7 +99,8 @@ usemin: {
   html: ['**/*.html'],
   css: ['**/*.css'],
   options: {
-    dirs: ['temp', 'dist']
+    dirs: ['temp', 'dist'],
+    baseUrl: "http://cdn.example.com"
   }
 }
 ```
@@ -124,6 +125,12 @@ Change the basedir that represent the location of the transformed file. For exam
 ```
 
 By default, if the file to be transformed is `index.html`, the images, scripts, ... referenced by this file will be considered are being in the `views` directory, whereas they must be linked to the `styles` directory.
+
+### baseUrl
+Type: 'string'
+Default: nil
+
+Change the baseUrl that represent the remote location of the transformed file. For example, given a base url of `http://cdn.example.com` then references to `scripts/app.js` will be transformed to `http://cdn.example.com/scripts/app.js`
 
 ## License
 

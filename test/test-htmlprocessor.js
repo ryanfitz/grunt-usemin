@@ -265,6 +265,39 @@ describe('htmlprocessor', function () {
       assert.equal(replaced, '<input type="image" src="' + filemapping['image.png'] + '" />');
     });
 
+    it('should replace JS referenced to point to base url version', function () {
+      var baseUrl = "http://cdn.test.com";
+      var content = '<script src="/foo.js"></script>';
+      var hp = new HTMLProcessor('', '', content, revvedfinder, {baseUrl: baseUrl});
+      var replaced = hp.replaceWithRevved();
+      assert.equal(replaced, '<script src="' + baseUrl + '/1234.foo.js"></script>');
+    });
+
+    it('should replace JS (requirejs) reference to point to base url version', function () {
+      var baseUrl = "http://cdn.test.com";
+      var content = '<script data-main="bar" src="require.js"></script>';
+      var hp = new HTMLProcessor('', '', content, revvedfinder, {baseUrl: baseUrl});
+      var replaced = hp.replaceWithRevved();
+
+      assert.equal(replaced, '<script data-main="' + baseUrl + '/bar" src="' + baseUrl + '/require.js"></script>');
+    });
+
+    it('should replace CSS reference to point to base url version', function () {
+      var baseUrl = "http://cdn.test.com";
+      var content = '<link rel="stylesheet" href="bar.css">';
+      var hp = new HTMLProcessor('', '', content, revvedfinder, {baseUrl: baseUrl});
+      var replaced = hp.replaceWithRevved();
+      assert.equal(replaced, '<link rel="stylesheet" href="' + baseUrl + "/" + filemapping['bar.css'] + '">');
+    });
+
+    it('should replace image reference in input to point to base url', function () {
+      var baseUrl = "http://cdn.test.com";
+      var content = '<input type="image" src="image.png" />';
+      var hp = new HTMLProcessor('', '', content, revvedfinder, {baseUrl: baseUrl});
+      var replaced = hp.replaceWithRevved();
+      assert.equal(replaced, '<input type="image" src="' + baseUrl + "/" + filemapping['image.png'] + '" />');
+    });
+
   });
 
   describe('process', function () {

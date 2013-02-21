@@ -221,6 +221,33 @@ describe('usemin', function () {
     assert.ok(changed.match(/src="subdir\/2131\.test2\.png"/));
   });
 
+  it('should use baseUrl if configured', function () {
+    grunt.log.muted = true;
+    grunt.config.init();
+    grunt.config('usemin', {
+      html: 'build/index.html',
+      options: {
+        baseUrl: "http://cdn.test.com"
+      }
+    });
+    grunt.file.mkdir('build');
+    grunt.file.mkdir('build/images');
+    grunt.file.mkdir('build/images/misc');
+    grunt.file.write('build/images/23012.test.png', 'foo');
+    grunt.file.write('build/images/misc/2a436.test.png', 'foo');
+    grunt.file.copy(path.join(__dirname, 'fixtures/relative_path.html'), 'build/index.html');
+    grunt.task.run('usemin');
+    grunt.task.start();
+
+    var changed = grunt.file.read('build/index.html');
+
+    // Check replace has performed its duty
+    assert.ok(changed.match(/<script src=\"http:\/\/cdn.test.com\/scripts\/foo\.js\"><\/script>/));
+    assert.ok(changed.match(/<script data-main=\"http:\/\/cdn.test.com\/scripts\/amd-app\" src=\"http:\/\/cdn.test.com\/scripts\/vendor\/require\.js\"><\/script>/));
+    assert.ok(changed.match(/img[^\>]+src=['"]http:\/\/cdn.test.com\/images\/23012\.test\.png["']/));
+    assert.ok(changed.match(/img[^\>]+src=['"]http:\/\/cdn.test.com\/images\/misc\/2a436\.test\.png["']/));
+    assert.ok(changed.match(/img[^\>]+src=['"]http:\/\/cdn.test.com\/images\/23012\.test\.png["']/));
+  });
 
   describe('useminPrepare', function () {
     it('should update the config (HTML)', function () {
